@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Documento Markdown Local</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+        label, input, button {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .section-group {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            width: auto;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            margin-right: 5px;
+            margin-bottom: 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Generador de Reporte Personal (Markdown)</h2>
+    <form id="formularioDatos">
+        <div class="section-group">
+            <h3>Datos Personales</h3>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="edad">Edad:</label>
+            <input type="number" id="edad" name="edad" required min="1">
+        </div>
+
+        <div class="section-group">
+            <h3>Gustos de Comida</h3>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="comida" value="Pizza"> Pizza</label>
+                <label><input type="checkbox" name="comida" value="Sushi"> Sushi</label>
+                <label><input type="checkbox" name="comida" value="Tacos"> Tacos</label>
+                <label><input type="checkbox" name="comida" value="Ensalada"> Ensalada (Healthy)</label>
+            </div>
+        </div>
+
+        <div class="section-group">
+            <h3>Películas Favoritas (Ejemplos al azar)</h3>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="pelicula" value="The Matrix"> The Matrix</label>
+                <label><input type="checkbox" name="pelicula" value="Pulp Fiction"> Pulp Fiction</label>
+                <label><input type="checkbox" name="pelicula" value="Inception"> Inception</label>
+                <label><input type="checkbox" name="pelicula" value="Amelie"> Amelie</label>
+            </div>
+        </div>
+        
+        <button type="submit">Generar y Descargar Archivo (.md)</button>
+    </form>
+</div>
+
+<script>
+    // **Función de descarga reutilizable**
+    function descargarArchivo(contenido, nombreArchivo, mimeType = 'text/plain;charset=utf-8') {
+        const blob = new Blob([contenido], { type: mimeType });
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        a.href = url;
+        a.download = nombreArchivo;
+        
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Escuchar el envío del formulario
+    document.getElementById('formularioDatos').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+        
+        // 1. OBTENER DATOS SIMPLES
+        const nombre = document.getElementById('nombre').value;
+        const edad = document.getElementById('edad').value;
+        
+        // 2. OBTENER DATOS DE CHECKBOXES
+        
+        // Función auxiliar para obtener los valores de checkboxes marcados por su nombre
+        const obtenerValoresCheckbox = (name) => {
+            const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        };
+
+        const comidasSeleccionadas = obtenerValoresCheckbox('comida');
+        const peliculasSeleccionadas = obtenerValoresCheckbox('pelicula');
+
+        // 3. GENERAR CONTENIDO EN FORMATO MARKDOWN
+        
+        let contenidoMD = `# Reporte Personal de ${nombre}\n\n`; // Título principal
+        contenidoMD += `---\n\n`; // Separador
+        
+        // Sección de datos básicos
+        contenidoMD += `## Datos Básicos\n\n`;
+        contenidoMD += `- **Nombre:** ${nombre}\n`;
+        contenidoMD += `- **Edad:** ${edad} años\n\n`;
+        
+        // Sección de Comidas
+        contenidoMD += `## Gustos de Comida (${comidasSeleccionadas.length} seleccionados)\n\n`;
+        if (comidasSeleccionadas.length > 0) {
+            // Lista no ordenada de Markdown con guiones (-)
+            contenidoMD += comidasSeleccionadas.map(c => `- ${c}`).join('\n');
+            contenidoMD += '\n\n';
+        } else {
+            contenidoMD += '*No se seleccionaron comidas.*\n\n';
+        }
+
+        // Sección de Películas
+        contenidoMD += `## Películas Favoritas (${peliculasSeleccionadas.length} seleccionadas)\n\n`;
+        if (peliculasSeleccionadas.length > 0) {
+            // Lista no ordenada de Markdown con guiones (-)
+            contenidoMD += peliculasSeleccionadas.map(p => `- ${p}`).join('\n');
+            contenidoMD += '\n\n';
+        } else {
+            contenidoMD += '*No se seleccionaron películas.*\n\n';
+        }
+
+        contenidoMD += `---
+*Reporte generado localmente el ${new Date().toLocaleDateString('es-ES')}*
+`;
+
+        // 4. DESCARGAR EL ARCHIVO
+        
+        const nombreArchivo = `Reporte_${nombre.replace(/\s/g, '_')}.md`;
+        
+        // Llamar a la función de descarga (el mimeType por defecto es 'text/plain')
+        descargarArchivo(contenidoMD, nombreArchivo);
+
+        alert(`Archivo "${nombreArchivo}" generado y descargado (formato Markdown).`);
+    });
+</script>
+
+</body>
+</html>
