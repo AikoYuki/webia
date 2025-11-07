@@ -1,4 +1,4 @@
-            - name: FTP Deploy Action via lftp (FTP, SFTP, FTPS)
+  name: FTP Deploy Action via lftp (FTP, SFTP, FTPS)
   # You may pin to the exact commit or the version.
   # uses: pontago/lftp-deploy-action@47debd112419af76b6b7c0ee7861dc506a26f01b
   uses: pontago/lftp-deploy-action@v1.0.1
