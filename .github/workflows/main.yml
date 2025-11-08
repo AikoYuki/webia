@@ -35,5 +35,5 @@ jobs: # 3. Los trabajos a ejecutar
 
           # Si es estrictamente necesario definir el script (que parece ser el caso):
           script: "" 
-          # dry_run: # Si quieres probarlo antes de subir, descomenta y pon 'true'
-          # debug: true # Descomenta esto solo si sigue fallando para obtener logs detallados
+          dry_run: true
+          debug: true
