@@ -32,3 +32,8 @@ jobs: # 3. Los trabajos a ejecutar
           remote_dir: /htdocs/ # Confirma que esta sea la ruta de InfinityFree
           # If doesn't exists, create remote directory.
           create_remote_dir: true
+
+          # Si es estrictamente necesario definir el script (que parece ser el caso):
+          script: "" 
+          # dry_run: # Si quieres probarlo antes de subir, descomenta y pon 'true'
+          # debug: true # Descomenta esto solo si sigue fallando para obtener logs detallados
