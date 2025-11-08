@@ -1,1 +1,1 @@
-# Pruebas FTP y Curo de WEB con AI
+# Pruebas FTP y Curso de WEB con AI
