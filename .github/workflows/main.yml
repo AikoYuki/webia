@@ -34,6 +34,7 @@ jobs: # 3. Los trabajos a ejecutar
           create_remote_dir: true
 
           # Si es estrictamente necesario definir el script (que parece ser el caso):
-          script: "" 
+          script: |
+            mirror --reverse --delete --verbose ./ /htdocs/
           dry_run: true
           debug: true
